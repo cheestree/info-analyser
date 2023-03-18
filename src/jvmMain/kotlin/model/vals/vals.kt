@@ -17,8 +17,10 @@ var currFile : String? by mutableStateOf(null)
 var charMap = hashMapOf<String, Int>()
 var fmpMap = hashMapOf<String, Float>()
 var selfinfoMap = hashMapOf<String, Float>()
-var histogramWidth by mutableStateOf(0)
-var histogramHeight by mutableStateOf(0)
+var isCapitalSame by mutableStateOf(false)
+var isSpaceCounted by mutableStateOf(false)
+var isSignalSame by mutableStateOf(false)
+var isAlphabet by mutableStateOf(false)
 
 // Canvas
 var canvasWidth by mutableStateOf(0f)

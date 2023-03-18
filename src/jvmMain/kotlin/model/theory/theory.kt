@@ -1,9 +1,19 @@
 package model.theory
 
-import model.vals.currFile
+import model.vals.*
 import java.io.File
 import java.math.RoundingMode
+import java.text.Normalizer
+import java.util.regex.Pattern
 import kotlin.math.log2
+
+fun CharSequence.unaccent(): String {
+    val nfdNormalizedString = Normalizer.normalize(this, Normalizer.Form.NFD)
+    val pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+")
+    val output = pattern.matcher(nfdNormalizedString).replaceAll("")
+    //println("Original : $this, Modified : $output")
+    return output
+}
 
 fun convertToHistogram(file: File) : HashMap<String, Int>{
     currFile = file.name
@@ -12,8 +22,16 @@ fun convertToHistogram(file: File) : HashMap<String, Int>{
         val lineArr = line.split("")
         lineArr.forEach {
             if(it != "") {
-                hash.putIfAbsent(it, 0)
-                hash[it] = hash[it]!! + 1
+                var lowerOrNot = it
+                if(isCapitalSame && isSignalSame) lowerOrNot = it.lowercase().unaccent()
+                if(isSignalSame && !isCapitalSame) lowerOrNot = it.unaccent()
+                if(!isSignalSame && isCapitalSame) lowerOrNot = it.lowercase()
+                if(it != " " || !isSpaceCounted){
+                    if(isAlphabet && it.all { it.isLetter() } || !isAlphabet){
+                        hash.putIfAbsent(lowerOrNot, 0)
+                        hash[lowerOrNot] = hash[lowerOrNot]!! + 1
+                    }
+                }
             }
         }
     }
