@@ -40,6 +40,3 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-
-### Test Files ###
-/src/jvmMain/kotlin/model/testfolder/

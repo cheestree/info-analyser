@@ -11,7 +11,6 @@ fun CharSequence.unaccent(): String {
     val nfdNormalizedString = Normalizer.normalize(this, Normalizer.Form.NFD)
     val pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+")
     val output = pattern.matcher(nfdNormalizedString).replaceAll("")
-    //println("Original : $this, Modified : $output")
     return output
 }
 
