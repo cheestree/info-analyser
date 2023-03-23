@@ -11,7 +11,6 @@ fun CharSequence.unaccent(): String {
     val nfdNormalizedString = Normalizer.normalize(this, Normalizer.Form.NFD)
     val pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+")
     val output = pattern.matcher(nfdNormalizedString).replaceAll("")
-    //println("Original : $this, Modified : $output")
     return output
 }
 
@@ -38,30 +37,20 @@ fun convertToHistogram(file: File) : HashMap<String, Int>{
     return hash
 }
 
-fun fmp(hash : HashMap<String, Int>) : HashMap<String, Float>{
-    val newHash = hashMapOf<String, Float>()
-    val population = hash.values.sum().toFloat()
-    hash.forEach {
-        newHash.putIfAbsent(it.key, 0f)
-        newHash[it.key] = ((it.value / population) * 100f).toBigDecimal().setScale(4, RoundingMode.UP).toFloat()
+fun charinfomaker(hash : HashMap<String, Int>) : List<CharInfo>{
+    var newList = mutableListOf<CharInfo>()
+    var size = hash.values.sum()
+    hash.forEach { (t, u) ->
+        newList.add(CharInfo(t, u, size))
     }
-    return newHash
+    return newList
 }
 
-fun selfinfo(hash: HashMap<String, Float>) : HashMap<String, Float>{
-    val newHash = hashMapOf<String, Float>()
-    hash.forEach {
-        newHash.putIfAbsent(it.key, 0f)
-        newHash[it.key] = -log2(it.value/100f).toBigDecimal().setScale(4, RoundingMode.HALF_UP).toFloat()
-    }
-    return newHash
-}
+data class CharInfo(val char : String, val occ : Int, val pop : Int){
+    var fmp = ((occ.toFloat() / pop)*100).toBigDecimal().setScale(4, RoundingMode.UP).toFloat()
+    var selfinfo = -log2(occ.toFloat()/pop).toBigDecimal().setScale(4, RoundingMode.UP).toFloat()
 
-fun entropy(fmp: HashMap<String, Float>, selfinfoMap: HashMap<String, Float>) : Float {
-    var entropy = 0f
-    fmp.forEach{
-        entropy += selfinfoMap[it.key]!! * it.value
+    override fun toString(): String {
+        return "$char occurs $occ times, with $fmp probability and $selfinfo self info."
     }
-    entropy = (entropy/100).toBigDecimal().setScale(4, RoundingMode.HALF_UP).toFloat()
-    return entropy
 }

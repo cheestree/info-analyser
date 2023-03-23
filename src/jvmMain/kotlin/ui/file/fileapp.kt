@@ -13,12 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import model.theory.convertToHistogram
-import model.theory.fmp
-import model.theory.selfinfo
 import model.vals.charMap
 import model.vals.fileList
-import model.vals.fmpMap
-import model.vals.selfinfoMap
 
 @Composable
 fun fileApp(){
@@ -39,8 +35,6 @@ fun fileApp(){
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
                                 charMap = convertToHistogram(file)
-                                fmpMap = fmp(charMap)
-                                selfinfoMap = selfinfo(fmpMap)
                             }
                         ) {
                             Text(

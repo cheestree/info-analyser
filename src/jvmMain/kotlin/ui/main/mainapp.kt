@@ -16,18 +16,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import model.file.checkFiles
-import model.theory.entropy
+import model.theory.charinfomaker
 import model.vals.*
 import ui.customComposables.button.customButton
 import ui.customComposables.checkbox.customCheckbox
+import kotlin.math.ln
+import kotlin.math.log2
 
 @Composable
 fun mainApp(){
     MaterialTheme{
         Column{
-            val charList = charMap.toList().sortedBy { (_, value) -> value }.reversed()
-            val fmpList = fmpMap.toList().sortedBy { (_, value) -> value }.reversed()
-            val selfinfoList = selfinfoMap.toList().sortedBy { (_, value) -> value }
+            val map = charinfomaker(charMap).sortedByDescending { it.occ }
+            var entropy = 0f
+            if(map.isNotEmpty()) {
+                map.forEach {
+                        elem ->
+                    println("FMP ${elem.fmp} I ${-log2(elem.fmp)}")
+                    entropy += elem.fmp * (-log2(elem.fmp))
+                }
+            } else entropy = 0f
             Row(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
@@ -103,7 +111,7 @@ fun mainApp(){
                     )
                 }
                 Row{
-                    Text("${entropy(fmpMap, selfinfoMap)} bits/symbol")
+                    Text(if(map.isNotEmpty())"$entropy bits/symbol" else " bits/symbol")
                 }
             }
             Box(
@@ -117,10 +125,7 @@ fun mainApp(){
             ) {
                 LazyColumn {
                     items(charMap.size) {
-                        Text("Character ${charList[it].first} is present ${charList[it].second} times," +
-                                " will occur %${fmpList[it].second} of the time" +
-                                " and has ${selfinfoList[it].second} self information"
-                        )
+                        Text(map[it].toString())
                     }
                 }
             }
@@ -156,56 +161,18 @@ fun mainApp(){
                                 val rowHeightProportions = rowHeight / 100
                                 Row(
                                     modifier = Modifier
-                                        .height(fmpList[it].second.dp * rowHeightProportions)
+                                        .height(map[it].fmp.dp * rowHeightProportions)
                                         .fillMaxWidth()
                                         .background(Color.Blue)
                                 ) {}
                                 if (isHovered) {
-                                    string = "You're hovering on the character ${charList[it].first}, " +
-                                            "present ${charList[it].second} times."
+                                    string = "You're hovering on the character ${map[it].char}, " +
+                                            "present ${map[it].occ} times."
                                 }
                             }
                         }
                     }
                 }
-                /*
-                Row {
-                    Canvas(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .border(1.dp, Color.Gray)
-                            .background(Color.LightGray)
-                            .fillMaxSize()
-                    ){
-                        canvasWidth = this.size.width
-                        canvasHeight = this.size.height
-
-                        var counter = 0
-                        val canvasHeightToHeight = canvasHeight/100
-
-                        fmpMap.forEach{
-                            drawRect(
-                                color = Color.Blue,
-                                topLeft = Offset((canvasWidth / maxWidthHistogram())*counter,canvasHeight-it.value*canvasHeightToHeight),
-                                size = Size(canvasWidth / maxWidthHistogram(), it.value * canvasHeightToHeight)
-                            )
-                            counter += 1
-                        }
-
-                        /*
-                        for(i in fmpMap){
-                            drawRect(
-                                color = Color.Blue,
-                                topLeft = Offset((canvasWidth / maxWidthHistogram())*counter,canvasHeight-i.value*canvasHeightToHeight),
-                                size = Size(canvasWidth / maxWidthHistogram(), i.value * canvasHeightToHeight)
-                            )
-                            counter += 1
-                        }
-                        */
-                    }
-                }
-
-                 */
             }
         }
     }
