@@ -3,6 +3,7 @@ package model.theory
 import model.vals.*
 import java.io.File
 import java.math.RoundingMode
+import java.nio.charset.Charset
 import java.text.Normalizer
 import java.util.regex.Pattern
 import kotlin.math.log2
@@ -12,12 +13,17 @@ fun CharSequence.unaccent(): String {
     val pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+")
     val output = pattern.matcher(nfdNormalizedString).replaceAll("")
     return output
+    /*
+    Normalizer
+        .normalize(this, Normalizer.Form.NFD)
+        .replace("[^\\p{ASCII}]", "");
+     */
 }
 
 fun convertToHistogram(file: File) : HashMap<String, Int>{
     currFile = file.name
     val hash = hashMapOf<String, Int>()
-    file.forEachLine { line ->
+    file.forEachLine(charset = Charsets.ISO_8859_1) { line ->
         val lineArr = line.split("")
         lineArr.forEach {
             if(it != "") {
@@ -47,7 +53,7 @@ fun charinfomaker(hash : HashMap<String, Int>) : List<CharInfo>{
 }
 
 data class CharInfo(val char : String, val occ : Int, val pop : Int){
-    var fmp = ((occ.toFloat() / pop)*100).toBigDecimal().setScale(4, RoundingMode.UP).toFloat()
+    var fmp = (occ.toFloat() / pop).toBigDecimal().setScale(4, RoundingMode.UP).toFloat()
     var selfinfo = -log2(occ.toFloat()/pop).toBigDecimal().setScale(4, RoundingMode.UP).toFloat()
 
     override fun toString(): String {

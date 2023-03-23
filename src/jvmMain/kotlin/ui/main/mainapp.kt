@@ -32,7 +32,7 @@ fun mainApp(){
             if(map.isNotEmpty()) {
                 map.forEach {
                         elem ->
-                    println("FMP ${elem.fmp} I ${-log2(elem.fmp)}")
+                    //println("FMP ${elem.fmp} I ${-log2(elem.fmp)}")
                     entropy += elem.fmp * (-log2(elem.fmp))
                 }
             } else entropy = 0f
@@ -158,10 +158,9 @@ fun mainApp(){
                                     .fillMaxHeight(),
                                 contentAlignment = Alignment.BottomEnd
                             ) {
-                                val rowHeightProportions = rowHeight / 100
                                 Row(
                                     modifier = Modifier
-                                        .height(map[it].fmp.dp * rowHeightProportions)
+                                        .height((map[it].fmp*rowHeight).dp)
                                         .fillMaxWidth()
                                         .background(Color.Blue)
                                 ) {}
