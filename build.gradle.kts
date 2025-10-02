@@ -1,8 +1,8 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
-    kotlin("multiplatform")
-    id("org.jetbrains.compose")
+    kotlin("multiplatform") version "1.9.22"
+    id("org.jetbrains.compose") version "1.5.12"
 }
 
 group = "com.example"
@@ -19,12 +19,19 @@ kotlin {
         jvmToolchain(11)
         withJava()
     }
+    // Add other targets here (e.g., js, linux, macos, etc.)
     sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(compose.runtime)
+            }
+        }
         val jvmMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
             }
         }
+        val commonTest by getting
         val jvmTest by getting
     }
 }
