@@ -16,7 +16,7 @@ repositories {
 
 kotlin {
     jvm {
-        jvmToolchain(11)
+        jvmToolchain(17)
         withJava()
     }
     // Add other targets here (e.g., js, linux, macos, etc.)
@@ -24,6 +24,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(compose.runtime)
+                implementation("co.touchlab:kermit:2.0.0")
             }
         }
         val jvmMain by getting {
